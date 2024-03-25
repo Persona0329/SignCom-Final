@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signcom/Pages/Quiz/Quiz1.dart';
+import 'package:signcom/Pages/Quiz/Quiz2.dart';
 
 class TaskDetailPage extends StatefulWidget {
   @override
@@ -7,7 +8,7 @@ class TaskDetailPage extends StatefulWidget {
 }
 
 class _TaskDetailPageState extends State<TaskDetailPage> {
-  bool lessonFinished = false;
+  bool lessonFinished = true;
 
   @override
   Widget build(BuildContext context) {
@@ -18,40 +19,26 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8, // Set the width size here
+              width: MediaQuery.of(context).size.width * 0.8,
               child: PressableRoundedCorner(
-                label: 'Quiz 1',
-                onPressed: () {
-                  Navigator.push( 
-                      context,
-                      MaterialPageRoute(builder: (context) => Demo()),
-                    );
-                },
-              ),
-            ),
-            SizedBox(height: 40),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8, // Set the width size here
-              child: PressableRoundedCorner(
-                label: 'Quiz 2',
+                label: 'Quiz 1: Basic Alphabetics',
                 onPressed: () {
                   if (lessonFinished) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Demo()),
+                      MaterialPageRoute(builder: (context) => Quiz_1()),
                     );
                   } else {
-                    // Show dialog if lesson is not finished
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Alert'),
+                          title: Text('Lesson Not Finished'),
                           content: Text('You haven\'t finished the lesson yet.'),
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context); // Close the dialog
+                                Navigator.of(context).pop();
                               },
                               child: Text('OK'),
                             ),
@@ -65,108 +52,68 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             ),
             SizedBox(height: 40),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8, // Set the width size here
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: PressableRoundedCorner(
+                label: 'Quiz 2: Basic Numbers',
+                onPressed: () {
+                  if (lessonFinished) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Quiz_2()),
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Lesson Not Finished'),
+                          content: Text('You haven\'t finished the lesson yet.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 40),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
               child: PressableRoundedCorner(
                 label: 'Quiz 3',
                 onPressed: () {
-                  if (lessonFinished) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Demo()),
-                    );
-                  } else {
-                    // Show dialog if lesson is not finished
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Alert'),
-                          content: Text('You haven\'t finished the lesson yet.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  // Similar logic for Quiz 3
                 },
               ),
             ),
             SizedBox(height: 40),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8, // Set the width size here
+              width: MediaQuery.of(context).size.width * 0.8,
               child: PressableRoundedCorner(
                 label: 'Quiz 4',
                 onPressed: () {
-                  if (lessonFinished) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Demo()),
-                    );
-                  } else {
-                    // Show dialog if lesson is not finished
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Alert'),
-                          content: Text('You haven\'t finished the lesson yet.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  // Similar logic for Quiz 4
                 },
               ),
             ),
             SizedBox(height: 40),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8, // Set the width size here
+              width: MediaQuery.of(context).size.width * 0.8,
               child: PressableRoundedCorner(
                 label: 'Quiz 5',
                 onPressed: () {
-                  if (lessonFinished) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Demo()),
-                    );
-                  } else {
-                    // Show dialog if lesson is not finished
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Alert'),
-                          content: Text('You haven\'t finished the lesson yet.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  // Similar logic for Quiz 5
                 },
               ),
             ),
             SizedBox(height: 40),
-            
           ],
         ),
       ),

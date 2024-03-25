@@ -54,9 +54,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         backgroundColor: Color.fromRGBO(26, 26, 26, 1),
         title: Text(
           'Forgot Password',
-          style: TextStyle(color: Colors.white), // Set title text color to white
+          style: TextStyle(color: Colors.white), 
         ),
-        iconTheme: IconThemeData(color: Colors.white), // Set back button color to white
+        iconTheme: IconThemeData(color: Colors.white), 
       ),
       body: Container(
         color: Color.fromRGBO(21, 20, 21, 1),
@@ -64,13 +64,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Add your "Forgot Password" content here
+            
             Text(
               'Enter your email to reset your password',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), // Make text bold
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), 
             ),
             const SizedBox(height: 16.0),
-            // Add the email input field and reset password button here
+            
             TextField(
               controller: _emailController,
               style: TextStyle(color: Colors.white),

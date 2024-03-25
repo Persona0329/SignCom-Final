@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class Lesson2 extends StatefulWidget {
@@ -10,12 +8,14 @@ class Lesson2 extends StatefulWidget {
 }
 
 class _Lesson2State extends State<Lesson2> {
+  bool lessonFinished = false; // Add a boolean variable to track lesson completion
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(26, 26, 26, 1),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80), // Adjust the height of the app bar as needed
+        preferredSize: Size.fromHeight(80), 
         child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -26,8 +26,8 @@ class _Lesson2State extends State<Lesson2> {
             width: 40,
             fit: BoxFit.contain,
           ),
-          automaticallyImplyLeading: true, // Make the back button visible
-          iconTheme: IconThemeData(color: Colors.white), // Set the color of the back button to white
+          automaticallyImplyLeading: true, 
+          iconTheme: IconThemeData(color: Colors.white), 
         ),
       ),
       body: SafeArea(
@@ -55,7 +55,7 @@ class _Lesson2State extends State<Lesson2> {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
-                            fontWeight: FontWeight.bold, // Make "Lesson 1" bold
+                            fontWeight: FontWeight.bold, 
                           ),
                         ),
                         TextSpan(
@@ -68,7 +68,7 @@ class _Lesson2State extends State<Lesson2> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20), // Adding some space between text and other content
+                  SizedBox(height: 20), 
                   Text(
                     'In this lesson, we\'ll explore these main areas:',
                     style: TextStyle(
@@ -76,21 +76,19 @@ class _Lesson2State extends State<Lesson2> {
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 10), // Adding some space between text and other content
-                  // Bullet points
+                  SizedBox(height: 10), 
                   _buildBulletPoint('Basic number hand signs: Learning how numbers are represented in sign language'),
                   _buildBulletPoint('Handshapes for each number: Understanding the unique hand configurations for numerical concepts.'),
                   _buildBulletPoint('Strengthening comprehension and mastery.'),
                   _buildBulletPoint('Emphasizing clear communication'),
-                  SizedBox(height: 20), // Adding some space between text and other content
-
+                  SizedBox(height: 20), 
                   Column(
                     children: [
                       Image.asset(
-                        'assets/basicnumbers.jpg', // Provide the path to your image
-                        fit: BoxFit.cover, // Adjust how the image fits the space
+                        'assets/basicnumbers.jpg', 
+                        fit: BoxFit.cover, 
                       ),
-                      SizedBox(height: 10), // Adding some space between image and text
+                      SizedBox(height: 10), 
                       Text(
                         'Numbers in Sign Language',
                         style: TextStyle(
@@ -101,6 +99,14 @@ class _Lesson2State extends State<Lesson2> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 20), 
+                  if (!lessonFinished) 
+                    ElevatedButton(
+                      onPressed: () {
+                        _finishLesson(context);
+                      },
+                      child: Text('Finish Lesson'),
+                    ),
                 ],
               ),
             ),
@@ -132,6 +138,30 @@ class _Lesson2State extends State<Lesson2> {
           ),
         ),
       ],
+    );
+  }
+
+  void _finishLesson(BuildContext context) {
+    setState(() {
+      lessonFinished = true;
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Congratulations!'),
+          content: Text('You have finished your second lesson. Quiz 2 is now unlocked.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); 
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

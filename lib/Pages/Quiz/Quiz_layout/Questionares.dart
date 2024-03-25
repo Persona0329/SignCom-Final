@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/Colors.dart';
 
@@ -33,16 +34,18 @@ class Question {
 final String id;
 final String title;
 final Map<String, bool> options;
+final String imageUrl;
 
 
 Question({
   required this.id,
   required this.title,
   required this.options,
+  required this.imageUrl,
 });
 
 @override
 String toString() {
-    return 'Question(id: $id, title: $title, options: $options)';
+    return 'Question(id: $id, title: $title, options: $options, imageUrl: $imageUrl)';
   }
 }

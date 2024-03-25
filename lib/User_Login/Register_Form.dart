@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:signcom/User_Login/Login_Form.dart';
+import 'package:signcom/User_Login/email_verify.dart';
 import 'package:signcom/firebase_auth_implementation/firebase_auth_services.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -19,6 +20,12 @@ class _RegisterFormState extends State<RegisterForm> {
 
   bool _showPassword = false;
   final _formKey = GlobalKey<FormState>();
+  RegExp pass_valid = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
+  bool validatePassword(String pass) {
+    String _password = pass.trim();
+    return pass_valid.hasMatch(_password);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +57,12 @@ class _RegisterFormState extends State<RegisterForm> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
                     }
+                    if (value.length > 16) {
+                      return 'Username must be at most 16 characters long';
+                    }
                     return null;
                   },
+                  maxLength: 16,
                 ),
                 SizedBox(height: 16.0),
 
@@ -107,8 +118,14 @@ class _RegisterFormState extends State<RegisterForm> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
+                    } else {
+                      bool result = validatePassword(value);
+                      if (result) {
+                        return null;
+                      } else {
+                        return "Password must contain at least one special character";
+                      }
                     }
-                    return null;
                   },
                 ),
                 SizedBox(height: 16.0),
@@ -166,17 +183,25 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void _signUp() async {
-    String username = _usernameController.text;
-    String email = _emailController.text;
-    String password = _passwordController.text;
+    if (_formKey.currentState!.validate()) {
+      String username = _usernameController.text;
+      String email = _emailController.text;
+      String password = _passwordController.text;
 
-    User? user = await _auth.SignupWithEmailAndPassword(email, password);
+      User? user = await _auth.SignupWithEmailAndPassword(email, password);
 
-    if (user != null) {
-      print("You have been Registered Successfully");
-      Navigator.pushNamed(context, "/home");
-    } else {
-      print("Failed to register");
+      if (user != null) {
+        // Send email verification
+        await user.sendEmailVerification();
+        print("A verification email has been sent to $email. Please verify your email before logging in.");
+        // Navigate to VerifyEmailPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VerifyEmailPage()),
+        );
+      } else {
+        print("Failed to register");
+      }
     }
   }
 }

@@ -1,73 +1,83 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/Colors.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/Options.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/Questionares.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/botton.dart';
 import 'package:signcom/Pages/Quiz/Quiz_layout/result.dart';
-class Demo extends StatefulWidget {
-  const Demo({Key? key});
+
+class Quiz_1 extends StatefulWidget {
+  const Quiz_1({Key? key});
 
   @override
-  State<Demo> createState() => _DemoState();
+  State<Quiz_1> createState() => _Quiz1State();
 }
 
-class _DemoState extends State<Demo> {
+class _Quiz1State extends State<Quiz_1> {
   List<Question> _questions = [
     Question(
       id: '10',
       title: 'Identify the letter in the Photo.',
       options: {'A': false, 'B': false, 'C': true, 'D': false},
-    ),
-    Question(
-      id: '11',
-      title: 'Identify the letter in the Photo.',
-      options: {'A': true, 'Z': false, 'F': false, 'G': false},
+      imageUrl: 'assets/Letters/Letter_C.jpg', 
     ),
     Question(
       id: '12',
       title: 'Identify the letter in the Photo.',
-      options: {'A': false, 'E': false, 'G': false, 'O': true},
+      options: {'A': true, 'B': false, 'C': false, 'D': false},
+      imageUrl: 'assets/Letters/Letter_A.jpg', 
     ),
     Question(
       id: '13',
       title: 'Identify the letter in the Photo.',
-      options: {'S': false, 'T': false, 'P': true, 'M': false},
+      options: {'X': false, 'P': false, 'J': true, 'L': false},
+      imageUrl: 'assets/Letters/Letter_J.jpg', 
     ),
     Question(
       id: '14',
       title: 'Identify the letter in the Photo.',
-      options: {'K': true, 'D': false, 'E': false, 'N': false},
+      options: {'Q': true, 'Z': false, 'Y': false, 'T': false},
+      imageUrl: 'assets/Letters/Letter_Q.jpg', 
     ),
     Question(
       id: '15',
       title: 'Identify the letter in the Photo.',
-      options: {'N': false, 'J': true, 'X': false, 'U': false},
+      options: {'M': false, 'N': true, 'O': false, 'P': false},
+      imageUrl: 'assets/Letters/Letter_N.jpg', 
     ),
     Question(
       id: '16',
       title: 'Identify the letter in the Photo.',
-      options: {'D': false, 'S': false, 'Q': true, 'L': false},
+      options: {'U': false, 'W': false, 'Y': true, 'Z': false},
+      imageUrl: 'assets/Letters/Letter_Y.jpg', 
     ),
     Question(
       id: '17',
       title: 'Identify the letter in the Photo.',
-      options: {'H': false, 'R': false, 'C': false, 'B': true},
+      options: {'T': false, 'O': false, 'K': false, 'S': true},
+      imageUrl: 'assets/Letters/Letter_S.jpg', 
     ),
     Question(
       id: '18',
       title: 'Identify the letter in the Photo.',
-      options: {'M': true, 'Y': false, 'Z': false, 'L': false},
+      options: {'M': true, 'G': false, 'F': false, 'I': false},
+      imageUrl: 'assets/Letters/Letter_M.jpg', 
     ),
     Question(
       id: '19',
       title: 'Identify the letter in the Photo.',
-      options: {'F': false, 'B': false, 'T': true, 'Y': false},
+      options: {'F': true, 'J': false, 'E': false, 'O': false},
+      imageUrl: 'assets/Letters/Letter_F.jpg', 
     ),
-
+    Question(
+      id: '20',
+      title: 'Identify the letter in the Photo.',
+      options: {'W': false, 'Q': false, 'R': false, 'U': true},
+      imageUrl: 'assets/Letters/Letter_U.jpg', 
+    ),
   ];
-
+  final audioCache = AudioCache();
+  final player = AudioPlayer();
   int index = 0;
   int score = 0;
   bool isPressed = false;
@@ -79,40 +89,45 @@ class _DemoState extends State<Demo> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => ResultB(
-        result: score,
-        questionLength: _questions.length,
-        onPressed: restart,
-      ));
+          result: score,
+          questionLength: _questions.length,
+          onPressed: restart,
+        ),
+      );
       return;
     } else {
-      if(isPressed){
+      if (isPressed) {
         setState(() {
           index++;
           isPressed = false;
           isScored = false;
-      });
-      } else  { 
+        });
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Please select any options'), behavior:
-          SnackBarBehavior.floating,
-          margin: EdgeInsets.symmetric(vertical: 20.0),)
+          SnackBar(
+            content: const Text('Please select any options'),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.symmetric(vertical: 20.0),
+          ),
         );
       }
     }
   }
 
-  void checkAnswer (bool value) {
+  Future<void> checkAnswer(bool value) async {
     if (isScored) {
       return;
+    } else {
+      if (value == true) {
+        score++;
+        player.play(AssetSource('Correct.mp3'));
       } else {
-        if (value == true) {
-      score++;
+        player.play(AssetSource('Incorrect.mp3'));
       }
-    setState(() {
-      isPressed = true;
-      isScored = true;
-        });
-
+      setState(() {
+        isPressed = true;
+        isScored = true;
+      });
     }
   }
 
@@ -124,7 +139,7 @@ class _DemoState extends State<Demo> {
       isScored = false;
     });
     Navigator.pop(context);
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,14 +150,15 @@ class _DemoState extends State<Demo> {
         backgroundColor: background,
         shadowColor: Colors.transparent,
         actions: [
-          Padding(padding: const EdgeInsets.all(18.0),
-          child: Text('Score: $score',
-            style: TextStyle(fontSize: 18.0),          
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Text(
+              'Score: $score',
+              style: TextStyle(fontSize: 18.0),
             ),
           ),
         ],
       ),
-
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -150,38 +166,75 @@ class _DemoState extends State<Demo> {
           children: [
             QuestionWidget(
               indexAction: index,
-              question: _questions[index]
-                    .title,
-                totalQuestion: _questions.length,
+              question: _questions[index].title,
+              totalQuestion: _questions.length,
+              imageUrl: _questions[index].imageUrl,
             ),
             const Divider(color: Colors.grey),
-
             const SizedBox(height: 25.0),
             for (int i = 0; i < _questions[index].options.length; i++)
-            GestureDetector(
-              onTap: () => checkAnswer(_questions[index].options.values.toList()[i]),
-              child: OptionC(option: _questions[index].options.keys.toList()[i],
-              color: isPressed ? _questions[index].options.values.toList()[i] == true ?  
-              correct 
-              : incorrect 
-              : neutral,
+              GestureDetector(
+                onTap: () => checkAnswer(_questions[index].options.values.toList()[i]),
+                child: OptionC(
+                  option: _questions[index].options.keys.toList()[i],
+                  color: isPressed
+                      ? _questions[index].options.values.toList()[i] == true
+                          ? correct
+                          : incorrect
+                      : neutral,
+                ),
               ),
-            ),
-
-
           ],
         ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: button1(
+          nextQuestion: nextQuestion,
         ),
-        
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: button1(
-            nextQuestion: nextQuestion,
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+}
 
+class QuestionWidget extends StatelessWidget {
+  final int indexAction;
+  final String question;
+  final int totalQuestion;
+  final String imageUrl;
+
+  const QuestionWidget({
+    Key? key,
+    required this.indexAction,
+    required this.question,
+    required this.totalQuestion,
+    required this.imageUrl,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (imageUrl.isNotEmpty) 
+          Container(
+            width: MediaQuery.of(context).size.width, 
+            height: 200, 
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.grey, 
+              image: DecorationImage(
+                image: AssetImage(imageUrl),
+                fit: BoxFit.contain, 
+              ),
+            ),
+          ), 
+        SizedBox(height: 10), 
+        Text(
+          'Question ${indexAction + 1}/$totalQuestion: $question',
+          style: TextStyle(fontSize: 18.0, color: Colors.white),
+        ),
+      ],
+    );
+  }
 }

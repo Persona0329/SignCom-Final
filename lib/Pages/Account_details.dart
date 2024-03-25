@@ -17,13 +17,14 @@ class AccountDetailPage extends StatefulWidget {
 
 class _AccountDetailPageState extends State<AccountDetailPage> {
   File? _imageFile;
-  TextEditingController _displayNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   late SharedPreferences _prefs;
 
   @override
   void initState() {
     super.initState();
-    _displayNameController.text = widget.currentUser.displayName ?? "";
+    _emailController.text = widget.currentUser.email ?? "";
 
     // Initialize Shared Preferences
     SharedPreferences.getInstance().then((prefs) {
@@ -42,17 +43,28 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
     }
   }
 
-  Future<void> _saveDisplayName(String newName) async {
-    await widget.currentUser.updateDisplayName(newName);
-    // Save display name to Shared Preferences
-    await _prefs.setString('displayName', newName);
-    setState(() {});
+  Future<void> _requestEmailChange(String newEmail) async {
+    try {
+      await widget.currentUser.verifyBeforeUpdateEmail(newEmail);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('A verification email has been sent to $newEmail. Please follow the instructions to complete the email change.')));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to request email change: $error')));
+    }
+  }
+
+  Future<void> _changePassword(String newPassword) async {
+    try {
+      await widget.currentUser.updatePassword(newPassword);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password changed successfully')));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to change password: $error')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(26, 26, 26, 1), // Preserved the background color
+      backgroundColor: Color.fromRGBO(26, 26, 26, 1),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -65,11 +77,11 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      _pickImage(ImageSource.gallery); // Open gallery to pick image
+                      _pickImage(ImageSource.gallery);
                     },
                     child: CircleAvatar(
                       radius: 80,
-                      backgroundColor: Colors.white, // Added a white background for the avatar
+                      backgroundColor: Colors.white,
                       backgroundImage: _imageFile != null
                           ? FileImage(_imageFile!)
                           : (widget.currentUser.photoURL != null
@@ -79,41 +91,103 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6), // Semi-transparent black background
+                      color: Colors.black.withOpacity(0.6),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
                       icon: Icon(Icons.camera_alt, color: Colors.white),
                       onPressed: () {
-                        _pickImage(ImageSource.gallery); // Open gallery to pick image
+                        _pickImage(ImageSource.gallery);
                       },
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: _displayNameController,
+              TextFormField(
+                controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: 'Display Name',
+                  labelText: 'Email: ${widget.currentUser.email}',
                   labelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
-                ),
-                style: TextStyle(color: Colors.white),
-                onEditingComplete: () {
-                  _saveDisplayName(_displayNameController.text);
-                },
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  'Email: ${widget.currentUser.email}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: () {
+                      _emailController.text = widget.currentUser.email ?? "";
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Request Email Change'),
+                            content: TextField(
+                              controller: _emailController,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _requestEmailChange(_emailController.text);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Request Change'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
+                style: TextStyle(color: Colors.white),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                obscureText: true,
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password: ********', // Display asterisks for security
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: () {
+                      _passwordController.clear();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Change Password'),
+                            content: TextField(
+                              controller: _passwordController,
+                              obscureText: true,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _changePassword(_passwordController.text);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Change Password'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
               ),
               SizedBox(height: 40),
               ElevatedButton(
@@ -135,7 +209,8 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
 
   @override
   void dispose() {
-    _displayNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 }

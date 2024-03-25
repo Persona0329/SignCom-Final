@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,15 +39,38 @@ class _LoginFormState extends State<LoginForm> {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isObscure = true; // Initially hide password
-
+  
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // Navigate to home page if login successful
-      Navigator.pushReplacementNamed(context, '/home');
+
+      // Check if the user's email is verified
+      if (userCredential.user != null && userCredential.user!.emailVerified) {
+        // Navigate to home page if login successful
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        // Show error message if email is not verified
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Email Not Verified'),
+              content: Text('Your email is not verified. Please check your email for verification.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } catch (e) {
       // Handle login errors
       print('Failed to sign in: $e');

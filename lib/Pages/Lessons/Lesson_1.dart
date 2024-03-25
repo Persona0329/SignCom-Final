@@ -120,7 +120,7 @@ class _Lesson1State extends State<Lesson1> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Demo()),
+                          MaterialPageRoute(builder: (context) => Quiz_1()),
                         );
                       },
                     ),

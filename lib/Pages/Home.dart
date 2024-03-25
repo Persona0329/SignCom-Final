@@ -14,40 +14,110 @@ class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController();
   var currentIndex = 0;
   late User _currentUser; // Declare currentUser variable
+  bool _isNewUser = true; // Flag to check if the user is new or returning
 
   @override
   void initState() {
     super.initState();
     // Get current user when the widget initializes
     _currentUser = FirebaseAuth.instance.currentUser!;
+    // Check if the user is new or returning
+    _isNewUser = _currentUser.metadata.creationTime == _currentUser.metadata.lastSignInTime;
   }
 
   @override
   Widget build(BuildContext context) {
     double displayWidth = MediaQuery.of(context).size.width;
 
+    // Original color of the navigation icons
+    Color iconColor = Colors.black;
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(26, 26, 26, 1),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        title: Image.asset(
-          'assets/logo2.png',
-          height: 40,
-          width: 40,
-          fit: BoxFit.contain,
-        ),
       ),
-      body: PageView(
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          HomeDetailPage(),
-          LessonsDetailPage(),
-          TaskDetailPage(),
-          AccountDetailPage(currentUser: _currentUser), // Pass currentUser here
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (currentIndex == 0) // Only show Welcome message on the home page
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 20, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _isNewUser ? "Welcome to SignCom:\nConnect" : "Welcome back to SignCom:\nConnect",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    Text(
+                      "ABOUT SIGNCOM: CONNECT",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "SignCom is a sign language learning mobile application designed to help you learn sign language efficiently. With interactive lessons, quizzes, and practice sessions, you can improve your sign language skills at your own pace.",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            SizedBox(height: 20),
+            Container(
+              height: MediaQuery.of(context).size.height - 250,
+              child: PageView(
+                controller: _pageController,
+                physics: NeverScrollableScrollPhysics(),
+                onPageChanged: (index) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+                children: [
+                  HomeDetailPage(),
+                  LessonsDetailPage(),
+                  TaskDetailPage(),
+                  AccountDetailPage(currentUser: _currentUser),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.all(displayWidth * 0.05),
@@ -73,6 +143,7 @@ class _HomePageState extends State<HomePage> {
               onTap: (index) {
                 handleNavigation(index);
               },
+              iconColor: iconColor,
             ),
             BottomBarButton(
               icon: Icons.menu_book_rounded,
@@ -81,6 +152,7 @@ class _HomePageState extends State<HomePage> {
               onTap: (index) {
                 handleNavigation(index);
               },
+              iconColor: iconColor,
             ),
             BottomBarButton(
               icon: Icons.assignment_rounded,
@@ -89,6 +161,7 @@ class _HomePageState extends State<HomePage> {
               onTap: (index) {
                 handleNavigation(index);
               },
+              iconColor: iconColor,
             ),
             BottomBarButton(
               icon: Icons.person_rounded,
@@ -97,6 +170,7 @@ class _HomePageState extends State<HomePage> {
               onTap: (index) {
                 handleNavigation(index);
               },
+              iconColor: iconColor,
             ),
           ],
         ),
@@ -121,12 +195,14 @@ class BottomBarButton extends StatelessWidget {
   final int index;
   final int currentIndex;
   final Function onTap;
+  final Color iconColor;
 
   const BottomBarButton({
     required this.icon,
     required this.index,
     required this.currentIndex,
     required this.onTap,
+    required this.iconColor,
   });
 
   @override
@@ -170,23 +246,12 @@ class BottomBarButton extends StatelessWidget {
             child: Icon(
               icon,
               size: displayWidth * 0.076,
-              color: currentIndex == index ? Colors.black : Colors.black,
+              color: iconColor, // Use the original icon color
             ),
           ),
         ],
       ),
     );
-  }
-}
-
-// Custom shape for AppBar
-class AppBarShape extends ContinuousRectangleBorder {
-  @override
-  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    return Path()
-      ..addRect(rect)
-      ..moveTo(rect.left, rect.bottom)
-      ..lineTo(rect.right, rect.bottom);
   }
 }
 

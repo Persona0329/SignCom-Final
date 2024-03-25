@@ -4,7 +4,9 @@ class QuestionWidget extends StatelessWidget {
   const QuestionWidget({Key? key,
   required this.question,
   required this.indexAction,
-  required this.totalQuestion})
+  required this.totalQuestion,
+  required this.ImageUrl,
+  })
   : super (key: key);
 
 
@@ -12,6 +14,7 @@ class QuestionWidget extends StatelessWidget {
   final String question;
   final int indexAction;
   final int totalQuestion;
+  final String ImageUrl;
 
 
   @override
